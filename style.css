@@ -1,3 +1,134 @@
 body {
-    background-color: red;
+    background-color: #DF362D;
+    margin: 0;
 }
+
+#title {
+    font-family: 'Rubik Iso', cursive;
+    color: #252525;
+    font-size: 90px;
+    text-align: center;
+    margin: 40px auto;
+}
+
+#navbar {
+    background-color: #252525;
+    height: 80px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    color: #DF362D;
+    text-decoration: none;
+}
+
+#searchBar {
+    display: flex;
+}
+
+.searchElement {
+    margin: 0px 5px;
+    font-size: 16px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#searchButton {
+    background-color: transparent;
+    border: 2px solid #e2e2e2;
+    border-radius: 10px;
+    color: #e2e2e2;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+}
+
+#searchButton:hover {
+    background-color: #606060;
+}
+
+#inputBar {
+    background-color: transparent;
+    border: 2px solid #e2e2e2;
+    border-radius: 10px;
+    color: #e2e2e2;
+    padding: 10px 25px;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    text-align: left;
+}
+
+#inputBar:focus {
+    background-color: #606060
+}
+
+/* Platform Selector Start */
+/* https://www.w3schools.com/howto/howto_custom_select.asp */
+/* The container must be positioned relative: */
+.platformSelector {
+    width: 180px;
+    background-color: transparent;
+    position: relative;
+    border: 2px solid #e2e2e2;
+    border-radius: 10px;
+}
+
+.platformSelector select {
+  display: none; /*hide original SELECT element: */
+}
+
+.select-selected {
+    margin: 2px;
+    background-color: #252525;
+    border-radius: 10px;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+    position: absolute;
+    content: "";
+    top: 18px;
+    right: 10px;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-color: #fff transparent transparent transparent;
+}
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+    border-color: transparent transparent #fff transparent;
+    top: 11px;
+}
+
+/* style the items (options), including the selected item: */
+.select-items div,.select-selected {
+    top: 5px;
+    color: #e2e2e2;
+    padding: 8px 16px;
+    /* border: 1px solid transparent;
+    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent; */
+    cursor: pointer;
+}
+
+/* Style items (options): */
+.select-items {
+    position: absolute;
+    background-color: #252525;
+    top: 105%;
+    left: 0;
+    right: 0;
+    z-index: 99;
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+    display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+    background-color: #606060;
+}
+/* Platform Selector End */

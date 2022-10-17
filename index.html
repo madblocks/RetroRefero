@@ -5,15 +5,34 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>RetroRefero</title>
         <link rel="stylesheet" type="text/css" href="style.css">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Anton&family=Azeret+Mono&family=Doppio+One&family=IBM+Plex+Mono&family=JetBrains+Mono&family=Michroma&family=Nabla&family=Passero+One&family=Roboto&family=Rubik+Iso&family=Silkscreen:wght@400;700&family=VT323&display=swap"
+            rel="stylesheet">
     </head>
     <body>
-        <h1>RetroRefero</h1>
+        <header>
+            <h1 id="title">RetroRefero</h1>
+            <nav id="navbar">
+                <form id="searchBar">
+                    <div class="platformSelector searchElement">
+                        <select>
+                            <option value="all">Platform</option>
+                            <option value="all">All</option>
+                            <option value="nes">NES</option>
+                            <option value="mega">Master System</option>
+                            <option value="gameboy">Game Boy</option>
+                            <option value="gamegear">Game Gear</option>
+                            <option value="genesis">Genesis</option>
+                            <option value="snes">SNES</option>     
+                        </select>
+                    </div>
+                    <input type="text" id="inputBar" value="" placeholder="Search" class="searchElement"/>
+                    <input type="button" id="searchButton" value="Search" class="searchElement"/>
+                </form>
+            </nav>
+        </header>
 
-        <form id="searchBar">
-            <input type="text" id="inputBar" value="" placeholder="Search"/>
-            <input type="button" id="searchButton" value="Search"/>
-        </form>
-        <div clas="container">
+        <div class="container">
             
         </div>
         <script src="script.js"></script>
