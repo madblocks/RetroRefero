@@ -15,6 +15,9 @@ body {
     background-color: #252525;
     height: 80px;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-family: 'JetBrains Mono', monospace;
     color: #DF362D;
     text-decoration: none;
@@ -22,6 +25,7 @@ body {
 
 #searchBar {
     display: flex;
+    margin-left: 5%;
 }
 
 .searchElement {
@@ -55,21 +59,43 @@ body {
     text-decoration: none;
     outline: none;
     text-align: left;
+    width: 300px;
 }
 
 #inputBar:focus {
     background-color: #606060
 }
 
-.navListIcons {
+.navListIconsContainer {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-right: 5%;
+    margin-left: 5%;
+    width: 200px;
+}
 
+.navListIcons {
+    color: #e2e2e2;
+    margin-right: 10px;
+    width: 40px;
+}
+
+.navListIcons:hover {
+    color: #17e500;
+    font-size: 2.5em;
+    transition: .3s ease-out;
+}
+
+.fa-dumpster-fire:hover {
+    color: #DF362D;
 }
 
 /* Platform Selector Start */
 /* https://www.w3schools.com/howto/howto_custom_select.asp */
 /* The container must be positioned relative: */
 .platformSelector {
-    width: 180px;
+    width: 170px;
     background-color: transparent;
     position: relative;
     border: 2px solid #e2e2e2;
@@ -155,7 +181,34 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 20px;
     color: #e2e2e2;
+    margin: 15px;
+}
+.title {
+    border-bottom: 2px solid #e2e2e2;
+    margin-bottom: 15px;
 }
 .summary {
-    font-size: 10px;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+.releaseDate {
+    font-size: 15px;
+}
+
+.listIconsContainer {
+    display: flex;
+    align-items: flex-end;
+    margin: 15px;
+}
+
+.listIcon {
+    color: #e2e2e2;
+    padding: 10px;
+    width: 40px;
+}
+
+.listIcon:hover {
+    color: #17e500;
+    font-size: 2.5em;
+    transition: .3s ease-out;
 }

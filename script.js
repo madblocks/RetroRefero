@@ -136,8 +136,22 @@ async function getTwitchToken(url = '', data = '') {
 class Games {
   constructor () {
     this.searchList = {}
-    this.myGamesList = {}
-    this.wishList = {}
+    this.myGamesList = {
+      nes: {},
+      master : {},
+      gameboy: {},
+      gamegear: {},
+      genesis: {},
+      snes: {}
+    }
+    this.wishList = {
+      nes: {},
+      master : {},
+      gameboy: {},
+      gamegear: {},
+      genesis: {},
+      snes: {}
+    }
   }
   logSearchResults(data, platformName, platformId) {
     // add property platformName so that games with multiple platforms can be kept track of separatly when added to myGamesList or wishList
@@ -146,21 +160,42 @@ class Games {
       game.platformId = platformId
       console.log(game.cover)
       if (game.cover != null) {
-        gamesList.addSearchList(game)
+        this.addSearchList(game)
       }
     }
   }
 
   addSearchList(game) {
-    this.searchList[`${game.id}`] = new Game(game)
+    this.searchList[game.id] = new Game(game)
+    // check if games are already in myGamesList or wishList for icon display.  updateListStatus will also add or update the list status property of the game
+    // this.updateListStatus(this.myGamesList, this.searchList[game.id])
+    // this.updateListStatus(this.wishList, this.searchList[game.id])
   }
+
+  updateListStatus(list, game) {
+    console.log(list + ' list status')
+    // check list for game - using game.properties so that list icon can change without updating diplay
+    // 
+  }
+
+  
   clearList(list) {
     this[list] = {}
   }
-  addMyGames(resultId) {
-    id = parseInt(resultId)
-    this.myGamesList.push(searchList[id])
+  addMyGamesList(event) {
+    // console.log(event)
+    // console.log(parseInt(event.path[2].dataset.id))
+    // console.log(event.path[2].dataset.platform)
+    let gameId = parseInt(event.path[2].dataset.id)
+    let platform = event.path[2].dataset.platform
+    let game = this.searchList[gameId]
+    this.myGamesList[platform][gameId] = game
+    
   }
+  addWishList() {
+    console.log('add wishList')
+  }
+
   findReleaseDateForPlatform(releaseDates, platformId) {
     let date = ''
     // first iterate over releaseDates and check for region 2 or North America
@@ -183,24 +218,22 @@ class Games {
     }
     return date
   }
-  displayGames(list) {
 
-  }
   displaySearchResults() {
     let searchResultsContainer = document.getElementById('searchResults')
-    for (const game in gamesList.searchList) {
+    for (const game in this.searchList) {
       let resultDiv = document.createElement('div')
       // add class so that elements can be removed by searching for class
       resultDiv.className = 'resultContainer'
       // assign gameId property so that divs can be searched for and if clicked referenced in searchList
-      resultDiv.dataset.id = gamesList.searchList[game].id
-      resultDiv.dataset.platform = gamesList.searchList[game].platformName
+      resultDiv.dataset.id = this.searchList[game].id
+      resultDiv.dataset.platform = this.searchList[game].platformName
       searchResultsContainer.appendChild(resultDiv)
 
       // cover art div
       let coverImg = document.createElement('img')
       coverImg.className = 'cover'
-      coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${gamesList.searchList[game].cover.image_id}.jpg`
+      coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this.searchList[game].cover.image_id}.jpg`
       resultDiv.appendChild(coverImg)
 
       // title and summary
@@ -208,11 +241,11 @@ class Games {
       titleDivContainer.className = 'titleContainer'
       let titleDiv = document.createElement('div')
       titleDiv.className = 'title'
-      titleDiv.innerText = gamesList.searchList[game].name
+      titleDiv.innerText = this.searchList[game].name
       titleDivContainer.appendChild(titleDiv)
       let summaryDiv = document.createElement('div')
       summaryDiv.className = 'summary'
-      let summaryArray = gamesList.searchList[game].summary.split('.')
+      let summaryArray = this.searchList[game].summary.split('.')
       let summaryBrief = ''
       for (let sentence of summaryArray) {
         if (summaryBrief.length < 400) {
@@ -223,10 +256,27 @@ class Games {
       titleDivContainer.appendChild(summaryDiv)
       let releaseDateDiv = document.createElement('div')
       releaseDateDiv.className = 'releaseDate'
-      releaseDateDiv.innerText = gamesList.findReleaseDateForPlatform(gamesList.searchList[game].releaseDates, gamesList.searchList[game].platformId)
+      releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this.searchList[game].releaseDates, this.searchList[game].platformId)
       titleDivContainer.appendChild(releaseDateDiv)
-
       resultDiv.appendChild(titleDivContainer)
+
+      // listIcons
+      let listIconsContainer = document.createElement('div')
+      listIconsContainer.className = 'listIconsContainer'
+      let myGamesIconDiv = document.createElement('div')
+      myGamesIconDiv.className = 'listIcon fa-solid fa-list-check fa-2x'
+      myGamesIconDiv.id = 'myGamesIcon'
+      myGamesIconDiv.addEventListener('click', this.addMyGamesList.bind(this))
+      let wishIconDiv = document.createElement('div')
+      wishIconDiv.className = 'listIcon fa-solid fa-gift fa-2x'
+      wishIconDiv.id = 'wishIcon'
+      wishIconDiv.addEventListener('click', this.addWishList.bind(this))
+      listIconsContainer.appendChild(myGamesIconDiv)
+      listIconsContainer.appendChild(wishIconDiv)
+      resultDiv.appendChild(listIconsContainer)
+
+
+      
 
       
       
@@ -288,7 +338,9 @@ let igdbResource = 'games'
 let searchInput = ''
 const searchButton = document.querySelector('#searchButton')
 const textInput = document.querySelector('#inputBar')
-let searchResults = {}
+const myGamesButton = document.querySelector('#myGamesButton')
+const wishListButton = document.querySelector('#wishListButton')
+// let searchResults = {}
 
 const buildSearch = (event) => {
     event.preventDefault()
