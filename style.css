@@ -15,9 +15,6 @@ body {
     background-color: #252525;
     height: 80px;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-family: 'JetBrains Mono', monospace;
     color: #DF362D;
     text-decoration: none;
@@ -62,6 +59,10 @@ body {
 
 #inputBar:focus {
     background-color: #606060
+}
+
+.navListIcons {
+
 }
 
 /* Platform Selector Start */
@@ -132,3 +133,29 @@ body {
     background-color: #606060;
 }
 /* Platform Selector End */
+
+.searchResults {
+    display: flex;
+}
+
+.resultContainer {
+    display: flex;
+    background-color: #252525;
+    margin: 10px;
+    height: 300px;
+    border-radius: 10px;
+    border: 2px solid #e2e2e2;
+}
+
+.cover {
+    border-radius: 8px 0 0 8px;
+}
+
+.titleContainer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: #e2e2e2;
+}
+.summary {
+    font-size: 10px;
+}

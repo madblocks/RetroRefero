@@ -8,6 +8,7 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Anton&family=Azeret+Mono&family=Doppio+One&family=IBM+Plex+Mono&family=JetBrains+Mono&family=Michroma&family=Nabla&family=Passero+One&family=Roboto&family=Rubik+Iso&family=Silkscreen:wght@400;700&family=VT323&display=swap"
             rel="stylesheet">
+        <script src="https://kit.fontawesome.com/8c83b08e82.js" crossorigin="anonymous"></script>
     </head>
     <body>
         <header>
@@ -19,7 +20,7 @@
                             <option value="all">Platform</option>
                             <option value="all">All</option>
                             <option value="nes">NES</option>
-                            <option value="mega">Master System</option>
+                            <option value="master">Master System</option>
                             <option value="gameboy">Game Boy</option>
                             <option value="gamegear">Game Gear</option>
                             <option value="genesis">Genesis</option>
@@ -29,10 +30,16 @@
                     <input type="text" id="inputBar" value="" placeholder="Search" class="searchElement"/>
                     <input type="button" id="searchButton" value="Search" class="searchElement"/>
                 </form>
+                <div class="navListIconsContainer">
+                    <i class="navListIcons fa-solid fa-list-check"></i>
+                    <i class="navListIcons fa-solid fa-box-archive"></i>
+                    <i class="navListIcons fa-solid fa-gift"></i>
+                    <i class="navListIcons fa-solid fa-dumpster-fire"></i>
+                </div>
             </nav>
         </header>
 
-        <div class="container">
+        <div class="container" id="searchResults">
             
         </div>
         <script src="script.js"></script>

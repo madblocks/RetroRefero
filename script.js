@@ -132,7 +132,134 @@ async function getTwitchToken(url = '', data = '') {
 // access_token: '7olqgdxlx0lnlh7d90qqhwih7hu4y8'
 
 // ###############################################################################################
-// API Search calls
+// Games Lists
+class Games {
+  constructor () {
+    this.searchList = {}
+    this.myGamesList = {}
+    this.wishList = {}
+  }
+  logSearchResults(data, platformName, platformId) {
+    // add property platformName so that games with multiple platforms can be kept track of separatly when added to myGamesList or wishList
+    for (const game of data) {
+      game.platformName = platformName
+      game.platformId = platformId
+      console.log(game.cover)
+      if (game.cover != null) {
+        gamesList.addSearchList(game)
+      }
+    }
+  }
+
+  addSearchList(game) {
+    this.searchList[`${game.id}`] = new Game(game)
+  }
+  clearList(list) {
+    this[list] = {}
+  }
+  addMyGames(resultId) {
+    id = parseInt(resultId)
+    this.myGamesList.push(searchList[id])
+  }
+  findReleaseDateForPlatform(releaseDates, platformId) {
+    let date = ''
+    // first iterate over releaseDates and check for region 2 or North America
+    releaseDates.forEach((releaseDate) => {
+      if (releaseDate.region === 2 && releaseDate.platform == platformId && date === '') {
+        date = releaseDate.human
+      }
+    })
+    // if not found iterate over releaseDates and check for region 8 or Worldwide
+    if (date === '') {
+      releaseDates.forEach((releaseDate) => {
+        if (releaseDate.region === 8 && releaseDate.platform == platformId && date === '') {
+        date = releaseDate.human
+        }
+      })
+    }
+    // if release date is still not found grab first one in releaseDates array
+    if (date === '') {
+        date = releaseDates[0].human
+    }
+    return date
+  }
+  displayGames(list) {
+
+  }
+  displaySearchResults() {
+    let searchResultsContainer = document.getElementById('searchResults')
+    for (const game in gamesList.searchList) {
+      let resultDiv = document.createElement('div')
+      // add class so that elements can be removed by searching for class
+      resultDiv.className = 'resultContainer'
+      // assign gameId property so that divs can be searched for and if clicked referenced in searchList
+      resultDiv.dataset.id = gamesList.searchList[game].id
+      resultDiv.dataset.platform = gamesList.searchList[game].platformName
+      searchResultsContainer.appendChild(resultDiv)
+
+      // cover art div
+      let coverImg = document.createElement('img')
+      coverImg.className = 'cover'
+      coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${gamesList.searchList[game].cover.image_id}.jpg`
+      resultDiv.appendChild(coverImg)
+
+      // title and summary
+      let titleDivContainer = document.createElement('div')
+      titleDivContainer.className = 'titleContainer'
+      let titleDiv = document.createElement('div')
+      titleDiv.className = 'title'
+      titleDiv.innerText = gamesList.searchList[game].name
+      titleDivContainer.appendChild(titleDiv)
+      let summaryDiv = document.createElement('div')
+      summaryDiv.className = 'summary'
+      let summaryArray = gamesList.searchList[game].summary.split('.')
+      let summaryBrief = ''
+      for (let sentence of summaryArray) {
+        if (summaryBrief.length < 400) {
+          summaryBrief += sentence + '. '
+        }
+      }
+      summaryDiv.innerText = summaryBrief
+      titleDivContainer.appendChild(summaryDiv)
+      let releaseDateDiv = document.createElement('div')
+      releaseDateDiv.className = 'releaseDate'
+      releaseDateDiv.innerText = gamesList.findReleaseDateForPlatform(gamesList.searchList[game].releaseDates, gamesList.searchList[game].platformId)
+      titleDivContainer.appendChild(releaseDateDiv)
+
+      resultDiv.appendChild(titleDivContainer)
+
+      
+      
+    }
+  }
+  clearDisplay() {
+    let toBeRemoved = document.querySelectorAll('.resultContainer')
+    for (const element of toBeRemoved) {
+      element.remove()
+    }
+  }
+}
+
+class Game {
+  constructor(game) {
+    this.artworks = game.artworks
+    this.cover = game.cover
+    this.firstReleaseDate = game.first_release_date
+    this.id = game.id
+    this.name = game.name
+    this.platformId = game.platformId
+    this.platformName = game.platformName
+    this.platforms = game.platforms
+    this.releaseDates = game.release_dates
+    this.screenshots = game.screenshots
+    this.summary = game.summary
+    this.videos = game.videos
+  }
+}
+
+gamesList = new Games()
+
+// IGDB API calls ################################################
 // igdb url
 const getIgdbUrl = (resource) => {
     let igdbUrl = ''
@@ -151,38 +278,80 @@ async function getIgdbData(resource, query) {
         'Client-ID': twitchOAuth.client_id,
         'Authorization': `Bearer ${twitchToken.access_token}`
     },
-    body: igdbQuery
+    body: query
   });
   return res
 };
 
-// igdb query
-let igdbQuery = 'fields *; where id = 1943;'
+// IGDB query
 let igdbResource = 'games'
+let searchInput = ''
 const searchButton = document.querySelector('#searchButton')
 const textInput = document.querySelector('#inputBar')
-let searchData = {}
+let searchResults = {}
 
 const buildSearch = (event) => {
     event.preventDefault()
 
     console.log(platformSelect.options[platformSelect.selectedIndex].value)
-    let platform = platformSelect.options[platformSelect.selectedIndex].value
-    let searchInput = textInput.value.toLowerCase()
+    let platformName = platformSelect.options[platformSelect.selectedIndex].value
+    searchInput = textInput.value.toLowerCase()
+
+    let platformId = '18'
+    switch (platformName) {
+      case 'all':
+        platformId = '18, 19, 22, 29, 33, 35, 64'
+        break
+      case 'nes':
+        platformId = '18'
+        break
+      case 'master':
+        platformId = '64'
+        break
+      case 'gameboy':
+        platformId = '22, 33'
+        break
+      case 'gamegear':
+        platformId = '35'
+        break
+      case 'genesis':
+        platformId = '29'
+        break
+      case 'snes':
+        platformId = '19'
+        break
+    }
+    // build query
+    // igdbQuery = `fields *; search "mario"; limit 10;`
+    // igdbQuery = `fields *; limit 100; sort id asc;`
+    // igdbQuery = `search "Super Mario"; fields *; where platforms = 18; limit 100;`
+    // igdbQuery = `search "${searchInput}"; fields *; where platforms = (${platformId}) & (age_ratings != null | category = 3) ; limit 50;`
     
+    let igdbBaseQuery = `fields artworks.*, cover.*, first_release_date, name, platforms, release_dates.*, screenshots.*, summary, videos.*;
+                where platforms = (${platformId}) & (age_ratings != null | category = 3);
+                limit 50;`
+    if (searchInput === '') {
+      igdbQuery = igdbBaseQuery
+    } else {
+    igdbQuery = `search "${searchInput}"; 
+                fields artworks.*, cover.*, first_release_date, name, platforms, release_dates.*, screenshots.*, summary, videos.*;
+                where platforms = (${platformId}) & (age_ratings != null | category = 3);
+                limit 50;`
+    }
     getIgdbData(igdbResource, igdbQuery)
     .then((res) => res.json())
     .then(data => {
         console.log(data)
-        searchResult = data
+        // searchResults = data
+        gamesList.clearList('searchList')
+        gamesList.clearDisplay()
+        // pass in platformName of the current search (nes, snes, genesis, etc) to add to game object
+        gamesList.logSearchResults(data, platformName, platformId)
+        gamesList.displaySearchResults()
     });
+    
 }
 
-class Game {
-  constructor() {
-
-  }
-}
 
 
 // Event Listeners
