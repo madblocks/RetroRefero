@@ -158,7 +158,6 @@ class Games {
     for (const game of data) {
       game.platformName = platformName
       game.platformId = platformId
-      console.log(game.cover)
       if (game.cover != null) {
         this.addSearchList(game)
       }
@@ -219,21 +218,23 @@ class Games {
     return date
   }
 
-  displaySearchResults() {
-    let searchResultsContainer = document.getElementById('searchResults')
-    for (const game in this.searchList) {
+  displayResultsFlex(list) {
+    // console.log(this[l])
+    // console.log(this.searchList)
+    let searchResultsContainer = document.getElementById('resultsDisplay')
+    for (const game in this[list]) {
       let resultDiv = document.createElement('div')
       // add class so that elements can be removed by searching for class
       resultDiv.className = 'resultContainer'
       // assign gameId property so that divs can be searched for and if clicked referenced in searchList
-      resultDiv.dataset.id = this.searchList[game].id
-      resultDiv.dataset.platform = this.searchList[game].platformName
+      resultDiv.dataset.id = this[list][game].id
+      resultDiv.dataset.platform = this[list][game].platformName
       searchResultsContainer.appendChild(resultDiv)
 
       // cover art div
       let coverImg = document.createElement('img')
       coverImg.className = 'cover'
-      coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this.searchList[game].cover.image_id}.jpg`
+      coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this[list][game].cover.image_id}.jpg`
       resultDiv.appendChild(coverImg)
 
       // title and summary
@@ -241,11 +242,11 @@ class Games {
       titleDivContainer.className = 'titleContainer'
       let titleDiv = document.createElement('div')
       titleDiv.className = 'title'
-      titleDiv.innerText = this.searchList[game].name
+      titleDiv.innerText = this[list][game].name
       titleDivContainer.appendChild(titleDiv)
       let summaryDiv = document.createElement('div')
       summaryDiv.className = 'summary'
-      let summaryArray = this.searchList[game].summary.split('.')
+      let summaryArray = this[list][game].summary.split('.')
       let summaryBrief = ''
       for (let sentence of summaryArray) {
         if (summaryBrief.length < 400) {
@@ -256,7 +257,7 @@ class Games {
       titleDivContainer.appendChild(summaryDiv)
       let releaseDateDiv = document.createElement('div')
       releaseDateDiv.className = 'releaseDate'
-      releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this.searchList[game].releaseDates, this.searchList[game].platformId)
+      releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this[list][game].releaseDates, this[list][game].platformId)
       titleDivContainer.appendChild(releaseDateDiv)
       resultDiv.appendChild(titleDivContainer)
 
@@ -399,12 +400,20 @@ const buildSearch = (event) => {
         gamesList.clearDisplay()
         // pass in platformName of the current search (nes, snes, genesis, etc) to add to game object
         gamesList.logSearchResults(data, platformName, platformId)
-        gamesList.displaySearchResults()
+        gamesList.displayResultsFlex('searchList')
     });
     
 }
 
-
+const displayList = (event) => {
+  gamesList.clearDisplay()
+  list = event.target.dataset.list
+  console.log(list)
+  gamesList.displayResultsFlex(list)
+}
 
 // Event Listeners
 searchButton.addEventListener('click', buildSearch)
+myGamesButton.addEventListener('click', displayList)
+wishListButton.addEventListener('click', displayList)
+
