@@ -136,22 +136,8 @@ async function getTwitchToken(url = '', data = '') {
 class Games {
   constructor () {
     this.searchList = {}
-    this.myGamesList = {
-      nes: {},
-      master : {},
-      gameboy: {},
-      gamegear: {},
-      genesis: {},
-      snes: {}
-    }
-    this.wishList = {
-      nes: {},
-      master : {},
-      gameboy: {},
-      gamegear: {},
-      genesis: {},
-      snes: {}
-    }
+    this.myGamesList = {}
+    this.wishList = {}
   }
   logSearchResults(data, platformName, platformId) {
     // add property platformName so that games with multiple platforms can be kept track of separatly when added to myGamesList or wishList
@@ -188,7 +174,7 @@ class Games {
     let gameId = parseInt(event.path[2].dataset.id)
     let platform = event.path[2].dataset.platform
     let game = this.searchList[gameId]
-    this.myGamesList[platform][gameId] = game
+    this.myGamesList[gameId] = game
     
   }
   addWishList() {
