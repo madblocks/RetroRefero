@@ -464,23 +464,35 @@ const buildSearch = (event) => {
     
 }
 
-// Get platform logos
-let platforms = []
-let platformQuery = `fields *; where id = (18, 19, 22, 29, 33, 35, 64) ;limit 50;`
-getIgdbData('platforms', platformQuery)
-  .then((res) => res.json())
-  .then(data => {
-    console.log(data)
-    platforms = data
-  })
+// // Get platform logos - the logos are bad and ID's don't match up.   
+//  Specifically NES which has a platform logo id of 229 under /platforms resource but is actually 228
+// let platforms = []
+// let platformQuery = `fields *; where id = (18, 19, 22, 29, 33, 35, 64) ;limit 50;`
+// getIgdbData('platforms', platformQuery)
+//   .then((res) => res.json())
+//   .then(data => {
+//     console.log(data)
+//     platforms = data
+//   })
 
-platforms.forEach((platform) => {
-  getIgdbData('platform_logos', `fields image_id; where id = ${platform.platform_logo}`)
-    .then((res) => res.json())
-    .then(data => {
-      console.log(data)
-    })
-})
+// platforms.forEach((platform) => {
+//   getIgdbData('platform_logos', `fields image_id; where id = ${platform.platform_logo}`)
+//     .then((res) => res.json())
+//     .then(data => {
+//       console.log(data)
+//     })
+// })
+
+// Logo SVG's from https://logos.fandom.com/wiki/Category:Defunct_video_game_systems
+let platformLogos = {
+            18: "https://static.wikia.nocookie.net/logopedia/images/0/0d/NES_logo.svg",
+            35 : "https://static.wikia.nocookie.net/logopedia/images/c/ca/SEGA_Game_Gear_Early_NA_Logo.svg",
+            22 : "https://static.wikia.nocookie.net/logopedia/images/8/81/D6qt2ly-5c06d9cc-e979-4d32-bb59-2332cc124348.png",
+            33 : "https://static.wikia.nocookie.net/logopedia/images/d/d5/Nintendo_Game_Boy_packaging.svg",
+            19 : "https://static.wikia.nocookie.net/logopedia/images/2/2c/SNES_logo.svg",
+            64 : "https://static.wikia.nocookie.net/logopedia/images/0/0f/Sega_Master_System.svg",
+            29 : "https://static.wikia.nocookie.net/logopedia/images/a/aa/Sega_Genesis.svg"
+}
 
 const clearHighlight = () => {
   let buttons = document.querySelectorAll('.navListButtons')
