@@ -177,14 +177,16 @@ class Games {
     this[list] = {}
   }
   addMyGamesList(event) {
-    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    console.log(event)
+    let gameId = parseInt(event.composedPath()[3].dataset.id)
     let game = this[this.currentDisplayedList][gameId]
     this.myGamesList[gameId] = game
     // update icon inList class
     event.target.classList.add('inList')
   }
   addWishList(event) {
-    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    console.log(event)
+    let gameId = parseInt(event.composedPath()[3].dataset.id)
     let game = this[this.currentDisplayedList][gameId]
     this.wishList[gameId] = game
     // update icon inList class
@@ -192,9 +194,9 @@ class Games {
   }
 
   removeGameFromList(event) {
-    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    let gameId = parseInt(event.composedPath()[3].dataset.id)
     delete this[this.currentDisplayedList][gameId]
-    event.composedPath()[2].remove()
+    event.composedPath()[3].remove()
     // doesn't work document.querySelector(`[data-id="${gameId}"]`)
   }
 
@@ -278,6 +280,30 @@ class Games {
       titleDivContainer.appendChild(releaseDateDiv)
       resultDiv.appendChild(titleDivContainer)
 
+      // End Container - Ratings and Icons
+      let endContainer = document.createElement('div')
+      endContainer.className = 'endContainer'
+      // Ratings
+      let ratingsContainer = document.createElement('div')
+      ratingsContainer.className = 'ratingsContainer'
+      let ratingsDiv = document.createElement('div')
+      ratingsDiv.className = 'ratings'
+      let rating = Math.round(this[list][game].rating)
+      if (rating >= 85) {
+        ratingsDiv.classList.add('highRating')
+      } else if (rating >= 75) {
+        ratingsDiv.classList.add('midHighRating')
+      } else if (rating >= 60) {
+        ratingsDiv.classList.add('midRating')
+      } else {
+        ratingsDiv.classList.add('lowRating')
+      }
+      ratingsDiv.innerText = rating
+      if (!isNaN(rating)) {
+        ratingsContainer.appendChild(ratingsDiv)
+      }
+      endContainer.appendChild(ratingsContainer)
+
       // List and and Removal Icons
       let listIconsContainer = document.createElement('div')
       listIconsContainer.className = 'listIconsContainer'
@@ -309,7 +335,9 @@ class Games {
         listIconsContainer.appendChild(trashIconDiv)
       }
       
-      resultDiv.appendChild(listIconsContainer)
+      endContainer.appendChild(listIconsContainer)
+      
+      resultDiv.appendChild(endContainer)
     }
   }
   clearDisplay() {
@@ -386,22 +414,22 @@ const buildSearch = (event) => {
       case 'all':
         platformId = '18, 19, 22, 29, 33, 35, 64'
         break
-      case 'nes':
+      case 'NES':
         platformId = '18'
         break
-      case 'master':
+      case 'SMS':
         platformId = '64'
         break
-      case 'gameboy':
+      case 'Game Boy':
         platformId = '22, 33'
         break
-      case 'gamegear':
+      case 'Game Gear':
         platformId = '35'
         break
-      case 'genesis':
+      case 'Genesis':
         platformId = '29'
         break
-      case 'snes':
+      case 'SNES':
         platformId = '19'
         break
     }
@@ -422,7 +450,7 @@ const buildSearch = (event) => {
                 where platforms = (${platformId}) & (age_ratings != null | category = 3);
                 limit 50;`
     }
-    getIgdbData(igdbResource, igdbQuery)
+    getIgdbData('games', igdbQuery)
     .then((res) => res.json())
     .then(data => {
         console.log(data)
@@ -435,6 +463,24 @@ const buildSearch = (event) => {
     });
     
 }
+
+// Get platform logos
+let platforms = []
+let platformQuery = `fields *; where id = (18, 19, 22, 29, 33, 35, 64) ;limit 50;`
+getIgdbData('platforms', platformQuery)
+  .then((res) => res.json())
+  .then(data => {
+    console.log(data)
+    platforms = data
+  })
+
+platforms.forEach((platform) => {
+  getIgdbData('platform_logos', `fields image_id; where id = ${platform.platform_logo}`)
+    .then((res) => res.json())
+    .then(data => {
+      console.log(data)
+    })
+})
 
 const clearHighlight = () => {
   let buttons = document.querySelectorAll('.navListButtons')
