@@ -100,6 +100,21 @@ then close all select boxes: */
 document.addEventListener("click", closeAllSelect);
 
 // ###############################################################################################
+// sticky navBar
+let navbar = document.querySelector('#navbar')
+let display = document.querySelector('#resultsDisplay')
+let sticky = navbar.offsetTop
+window.onscroll = function() {
+  if (window.scrollY >= sticky) {
+    navbar.classList.add('sticky')
+    display.classList.add('topMargin')
+  } else {
+    navbar.classList.remove('sticky')
+    display.classList.remove('topMargin')
+  }
+}
+
+// ###############################################################################################
 // build twitch post data for OAuth token
 let twitchBody = [];
 for (let prop in twitchOAuth) {
@@ -138,6 +153,7 @@ class Games {
     this.searchList = {}
     this.myGamesList = {}
     this.wishList = {}
+    this.currentDisplayedList = ''
   }
   logSearchResults(data, platformName, platformId) {
     // add property platformName so that games with multiple platforms can be kept track of separatly when added to myGamesList or wishList
@@ -157,28 +173,40 @@ class Games {
     // this.updateListStatus(this.wishList, this.searchList[game.id])
   }
 
-  updateListStatus(list, game) {
-    console.log(list + ' list status')
-    // check list for game - using game.properties so that list icon can change without updating diplay
-    // 
-  }
-
-  
   clearList(list) {
     this[list] = {}
   }
   addMyGamesList(event) {
-    // console.log(event)
-    // console.log(parseInt(event.path[2].dataset.id))
-    // console.log(event.path[2].dataset.platform)
-    let gameId = parseInt(event.path[2].dataset.id)
-    let platform = event.path[2].dataset.platform
-    let game = this.searchList[gameId]
+    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    let game = this[this.currentDisplayedList][gameId]
     this.myGamesList[gameId] = game
-    
+    // update icon inList class
+    event.target.classList.add('inList')
   }
-  addWishList() {
-    console.log('add wishList')
+  addWishList(event) {
+    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    let game = this[this.currentDisplayedList][gameId]
+    this.wishList[gameId] = game
+    // update icon inList class
+    event.target.classList.add('inList')
+  }
+
+  removeGameFromList(event) {
+    let gameId = parseInt(event.composedPath()[2].dataset.id)
+    delete this[this.currentDisplayedList][gameId]
+    event.composedPath()[2].remove()
+    // doesn't work document.querySelector(`[data-id="${gameId}"]`)
+  }
+
+  checkList(gameId, listToCheck) {
+    let inList = false
+    for (const game in this[listToCheck]) {
+      // gameId === this[listToCheck][game].id ? inList = true : inList = false
+      if (gameId === this[listToCheck][game].id) {
+        inList = true
+      }
+    }
+    return inList
   }
 
   findReleaseDateForPlatform(releaseDates, platformId) {
@@ -205,8 +233,8 @@ class Games {
   }
 
   displayResultsFlex(list) {
-    // console.log(this[l])
-    // console.log(this.searchList)
+    this.currentDisplayedList = list
+    
     let searchResultsContainer = document.getElementById('resultsDisplay')
     for (const game in this[list]) {
       let resultDiv = document.createElement('div')
@@ -223,50 +251,65 @@ class Games {
       coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this[list][game].cover.image_id}.jpg`
       resultDiv.appendChild(coverImg)
 
-      // title and summary
+      // Title Summary and Relase Date Div
+      // Title
       let titleDivContainer = document.createElement('div')
       titleDivContainer.className = 'titleContainer'
       let titleDiv = document.createElement('div')
       titleDiv.className = 'title'
       titleDiv.innerText = this[list][game].name
       titleDivContainer.appendChild(titleDiv)
+      // Summary
       let summaryDiv = document.createElement('div')
       summaryDiv.className = 'summary'
       let summaryArray = this[list][game].summary.split('.')
       let summaryBrief = ''
       for (let sentence of summaryArray) {
-        if (summaryBrief.length < 400) {
+        if (summaryBrief.length < 300) {
           summaryBrief += sentence + '. '
         }
       }
       summaryDiv.innerText = summaryBrief
       titleDivContainer.appendChild(summaryDiv)
+      // Release Date
       let releaseDateDiv = document.createElement('div')
       releaseDateDiv.className = 'releaseDate'
       releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this[list][game].releaseDates, this[list][game].platformId)
       titleDivContainer.appendChild(releaseDateDiv)
       resultDiv.appendChild(titleDivContainer)
 
-      // listIcons
+      // List and and Removal Icons
       let listIconsContainer = document.createElement('div')
       listIconsContainer.className = 'listIconsContainer'
+
       let myGamesIconDiv = document.createElement('div')
       myGamesIconDiv.className = 'listIcon fa-solid fa-list-check fa-2x'
       myGamesIconDiv.id = 'myGamesIcon'
       myGamesIconDiv.addEventListener('click', this.addMyGamesList.bind(this))
+      // Check if game is currently in a list to add icon color class
+      if (this.checkList.bind(this)(this[list][game].id, 'myGamesList')) {
+        myGamesIconDiv.classList.add('inList')
+      }
       let wishIconDiv = document.createElement('div')
       wishIconDiv.className = 'listIcon fa-solid fa-gift fa-2x'
       wishIconDiv.id = 'wishIcon'
       wishIconDiv.addEventListener('click', this.addWishList.bind(this))
+      if (this.checkList(this[list][game].id, 'wishList')) {
+        wishIconDiv.classList.add('inList')
+      }
+      
       listIconsContainer.appendChild(myGamesIconDiv)
       listIconsContainer.appendChild(wishIconDiv)
+
+      if (list === 'myGamesList' || list === 'wishList') {
+        let trashIconDiv = document.createElement('div')
+        trashIconDiv.className = 'listIcon fa-solid fa-dumpster-fire fa-2x'
+        trashIconDiv.id = 'trashIcon'
+        trashIconDiv.addEventListener('click', this.removeGameFromList.bind(this))
+        listIconsContainer.appendChild(trashIconDiv)
+      }
+      
       resultDiv.appendChild(listIconsContainer)
-
-
-      
-
-      
-      
     }
   }
   clearDisplay() {
@@ -287,6 +330,7 @@ class Game {
     this.platformId = game.platformId
     this.platformName = game.platformName
     this.platforms = game.platforms
+    this.rating = game.rating
     this.releaseDates = game.release_dates
     this.screenshots = game.screenshots
     this.summary = game.summary
@@ -331,6 +375,7 @@ const wishListButton = document.querySelector('#wishListButton')
 
 const buildSearch = (event) => {
     event.preventDefault()
+    clearHighlight()
 
     console.log(platformSelect.options[platformSelect.selectedIndex].value)
     let platformName = platformSelect.options[platformSelect.selectedIndex].value
@@ -366,14 +411,14 @@ const buildSearch = (event) => {
     // igdbQuery = `search "Super Mario"; fields *; where platforms = 18; limit 100;`
     // igdbQuery = `search "${searchInput}"; fields *; where platforms = (${platformId}) & (age_ratings != null | category = 3) ; limit 50;`
     
-    let igdbBaseQuery = `fields artworks.*, cover.*, first_release_date, name, platforms, release_dates.*, screenshots.*, summary, videos.*;
+    let igdbBaseQuery = `fields artworks.*, cover.*, first_release_date, name, platforms, rating, release_dates.*, screenshots.*, summary, videos.*;
                 where platforms = (${platformId}) & (age_ratings != null | category = 3);
                 limit 50;`
     if (searchInput === '') {
       igdbQuery = igdbBaseQuery
     } else {
     igdbQuery = `search "${searchInput}"; 
-                fields artworks.*, cover.*, first_release_date, name, platforms, release_dates.*, screenshots.*, summary, videos.*;
+                fields artworks.*, cover.*, first_release_date, name, platforms, rating, release_dates.*, screenshots.*, summary, videos.*;
                 where platforms = (${platformId}) & (age_ratings != null | category = 3);
                 limit 50;`
     }
@@ -391,10 +436,29 @@ const buildSearch = (event) => {
     
 }
 
+const clearHighlight = () => {
+  let buttons = document.querySelectorAll('.navListButtons')
+  buttons.forEach((button) => {
+    if (button.classList.contains('highlight')) {
+      button.classList.remove('highlight')
+    }
+  })
+}
+
+const highlightListButton = (event) => {
+  if (event.target.id === 'myGamesButton') {
+    clearHighlight()
+    event.target.classList.add('highlight')
+  } else if (event.target.id === 'wishListButton') {
+    clearHighlight()
+    event.target.classList.add('highlight')
+  }
+}
+
 const displayList = (event) => {
   gamesList.clearDisplay()
   list = event.target.dataset.list
-  console.log(list)
+  highlightListButton(event)
   gamesList.displayResultsFlex(list)
 }
 

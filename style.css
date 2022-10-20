@@ -21,6 +21,16 @@ body {
     font-family: 'JetBrains Mono', monospace;
     color: #DF362D;
     text-decoration: none;
+    /* overflow: hidden; */
+}
+
+.sticky {
+  position: fixed;
+  top: 0;
+}
+
+.topMargin {
+    margin-top: 130px;
 }
 
 #searchBar {
@@ -39,7 +49,7 @@ body {
     border: 2px solid #e2e2e2;
     border-radius: 10px;
     color: #e2e2e2;
-    padding: 10px 25px;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline;
@@ -54,7 +64,7 @@ body {
     border: 2px solid #e2e2e2;
     border-radius: 10px;
     color: #e2e2e2;
-    padding: 10px 25px;
+    padding: 10px 15px;
     text-align: center;
     text-decoration: none;
     outline: none;
@@ -63,7 +73,7 @@ body {
 }
 
 #inputBar:focus {
-    background-color: #606060
+    background-color: #606060;
 }
 
 .navListIconsContainer {
@@ -72,23 +82,27 @@ body {
     align-items: center;
     margin-right: 5%;
     margin-left: 5%;
-    width: 200px;
+    width: 280px;
+    min-width: 255px;
 }
 
-.navListIcons {
+.navListButtons {
+    font-size: 16px;
     color: #e2e2e2;
-    margin-right: 10px;
-    width: 40px;
+    background-color: transparent;
+    border: 2px solid #e2e2e2;
+    border-radius: 10px;
+    padding: 10px 15px;
+    text-align: center;
 }
 
-.navListIcons:hover {
-    color: #17e500;
-    font-size: 2.5em;
-    transition: .3s ease-out;
+.navListButtons:hover {
+    background-color: #606060;
+    /* transition: .3s ease-out; */
 }
 
-.fa-dumpster-fire:hover {
-    color: #DF362D;
+.highlight {
+    background-color: #606060;
 }
 
 /* Platform Selector Start */
@@ -208,7 +222,15 @@ body {
 }
 
 .listIcon:hover {
-    color: #17e500;
+    color: dodgerblue;
     font-size: 2.5em;
     transition: .3s ease-out;
+}
+
+#trashIcon:hover {
+    color: #DF362D;
+}
+
+.inList {
+    color: dodgerblue;
 }
