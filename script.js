@@ -142,10 +142,6 @@ async function getTwitchToken(url = '', data = '') {
 //     })
 //     .catch(err => console.log(err));
 
-// some current twitch token
-// access_token: "t2bsgq72um22dhfu3vy2z8ydugdx6d"
-// access_token: '7olqgdxlx0lnlh7d90qqhwih7hu4y8'
-
 // ###############################################################################################
 // Games Lists
 class Games {
