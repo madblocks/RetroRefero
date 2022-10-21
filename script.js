@@ -179,6 +179,7 @@ class Games {
   addMyGamesList(event) {
     console.log(event)
     let gameId = parseInt(event.composedPath()[3].dataset.id)
+    console.log(event.composedPath()[3])
     let game = this[this.currentDisplayedList][gameId]
     this.myGamesList[gameId] = game
     // update icon inList class
@@ -378,6 +379,7 @@ class Games {
     let displayContainer = document.getElementById('resultsDisplay')
     let gameContainer = document.createElement('div')
     gameContainer.className = 'gameContainer'
+    gameContainer.dataset.id = game
     displayContainer.appendChild(gameContainer)
     
     let gameInfoContainer = document.createElement('div')
@@ -513,7 +515,9 @@ class Games {
     
     listIconsContainer.appendChild(myGamesIconDiv)
     listIconsContainer.appendChild(wishIconDiv)
-    gameContainer.appendChild(listIconsContainer)
+    let extraContainer = document.createElement('span')
+    gameContainer.appendChild(extraContainer)
+    extraContainer.appendChild(listIconsContainer)
   }
 }
 
@@ -686,6 +690,13 @@ const displayList = (event) => {
   highlightListButton(event)
   gamesList.displayResultsFlex(list)
 }
+
+textInput.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    searchButton.click();
+  }
+});
 
 // Event Listeners
 searchButton.addEventListener('click', buildSearch)
