@@ -254,6 +254,7 @@ class Games {
       // cover art div
       let coverImg = document.createElement('img')
       coverImg.className = 'cover'
+      coverImg.addEventListener('click',this.displayGame.bind(this))
       coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this[list][game].cover.image_id}.jpg`
       resultDiv.appendChild(coverImg)
 
@@ -365,6 +366,154 @@ class Games {
     for (const element of toBeRemoved) {
       element.remove()
     }
+    if (document.querySelector('.gameContainer')) {
+      document.querySelector('.gameContainer').remove()
+    }
+  }
+  displayGame(event) {
+    this.clearDisplay()
+    let game = event.composedPath()[1].dataset.id
+    let list = this.currentDisplayedList
+
+    let displayContainer = document.getElementById('resultsDisplay')
+    let gameContainer = document.createElement('div')
+    gameContainer.className = 'gameContainer'
+    displayContainer.appendChild(gameContainer)
+    
+    let gameInfoContainer = document.createElement('div')
+    gameInfoContainer.className = 'gameInfo'
+
+    // Cover
+    let coverImg = document.createElement('img')
+    coverImg.className = 'cover2'
+    coverImg.src = `https://images.igdb.com/igdb/image/upload/t_cover_small_2x/${this[list][game].cover.image_id}.jpg`
+    gameInfoContainer.appendChild(coverImg)
+
+    // Title Container
+    let titleContainer = document.createElement('div')
+    titleContainer.className = 'titleContainer'
+    // Title Bar (Title and Platform Logo)
+    let titleBar = document.createElement('div')
+    titleBar.className = 'titleBar'
+    // Title
+    let titleDiv = document.createElement('div')
+    titleDiv.className = 'title'
+    //console.log(this[list][game])
+    titleDiv.innerText = this[list][game].name
+    titleBar.appendChild(titleDiv)
+    // Platform Logo
+    let platformLogo = document.createElement('img')
+    platformLogo.className = 'logo'
+    let logoPlatformId = this[list][game].platformId
+    platformLogo.src = this.getPlatformLogo(logoPlatformId)
+    // adjust Logo Size
+    if (logoPlatformId == 19 || logoPlatformId == 29) {
+      platformLogo.classList.add('smallerLogo')
+    } else if (logoPlatformId == 33) {
+      platformLogo.classList.add('evenSmallerLogo')
+    }
+    titleBar.appendChild(platformLogo)
+    titleContainer.appendChild(titleBar)
+    // Summary
+    let summaryDiv = document.createElement('div')
+    summaryDiv.className = 'summary'
+    // let summaryArray = this[list][game].summary.split('.')
+    // let summaryBrief = ''
+    // for (let sentence of summaryArray) {
+    //   if (summaryBrief.length < 300) {
+    //     summaryBrief += sentence + '. '
+    //   }
+    // }
+    summaryDiv.innerText = this[list][game].summary
+    titleContainer.appendChild(summaryDiv)
+    // Release Date
+    let releaseDateDiv = document.createElement('div')
+    releaseDateDiv.className = 'releaseDate'
+    releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this[list][game].releaseDates, this[list][game].platformId)
+    titleContainer.appendChild(releaseDateDiv)
+    gameInfoContainer.appendChild(titleContainer)
+
+    let endContainer = document.createElement('div')
+    endContainer.className = 'endContainer'
+    // Ratings
+    let ratingsContainer = document.createElement('div')
+    ratingsContainer.className = 'ratingsGameContainer'
+    let ratingsDiv = document.createElement('div')
+    ratingsDiv.className = 'ratings'
+    let rating = Math.round(this[list][game].rating)
+    if (rating >= 85) {
+      ratingsDiv.classList.add('highRating')
+    } else if (rating >= 75) {
+      ratingsDiv.classList.add('midHighRating')
+    } else if (rating >= 60) {
+      ratingsDiv.classList.add('midRating')
+    } else {
+      ratingsDiv.classList.add('lowRating')
+    }
+    ratingsDiv.innerText = rating
+    if (!isNaN(rating)) {
+      ratingsContainer.appendChild(ratingsDiv)
+    }
+    endContainer.appendChild(ratingsContainer)
+    gameInfoContainer.appendChild(endContainer)
+    gameContainer.appendChild(gameInfoContainer)
+
+    let screenshotTitle = document.createElement('div')
+    screenshotTitle.className = 'gameSubTitle'
+    screenshotTitle.innerText = 'Screenshots:'
+    gameContainer.appendChild(screenshotTitle)
+    let screenshotsContainer = document.createElement('div')
+    screenshotsContainer.className = 'screenshotsContainer'
+    let screenshots = this[list][game].screenshots
+    for (let sShot of screenshots) {
+      let screenshot = document.createElement('img')
+      screenshot.className = 'screenshot'
+      screenshot.src = `https://images.igdb.com/igdb/image/upload/t_screenshot_med/${sShot.image_id}.jpg`
+      screenshotsContainer.appendChild(screenshot)
+    }
+    gameContainer.appendChild(screenshotsContainer)
+
+    // Videos
+    if (this[list][game].videos) {
+      let videosTitle = document.createElement('div')
+      videosTitle.className = 'gameSubTitle'
+      videosTitle.innerText = 'Videos: '
+      gameContainer.appendChild(videosTitle)
+      let videosContainer = document.createElement('div')
+      videosContainer.className = 'videosContainer'
+      let videos = this[list][game].videos
+      for (let vid of videos) {
+        let video = document.createElement('div')
+        video.className = 'video'
+        // embed video?
+        video.innerHTML = `<iframe width="560" height="315" src="https://www.youtube.com/embed/${vid.video_id}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+        videosContainer.appendChild(video)
+      }
+      gameContainer.appendChild(videosContainer)
+    }
+    // List and and Removal Icons
+    let listIconsContainer = document.createElement('div')
+    listIconsContainer.className = 'listIconsContainer'
+
+    let myGamesIconDiv = document.createElement('div')
+    myGamesIconDiv.className = 'listIcon fa-solid fa-list-check fa-2x'
+    myGamesIconDiv.id = 'myGamesIcon'
+    myGamesIconDiv.addEventListener('click', this.addMyGamesList.bind(this))
+    // Check if game is currently in a list to add icon color class
+    if (this.checkList.bind(this)(this[list][game].id, 'myGamesList')) {
+      myGamesIconDiv.classList.add('inList')
+    }
+    let wishIconDiv = document.createElement('div')
+    wishIconDiv.className = 'listIcon fa-solid fa-gift fa-2x'
+    wishIconDiv.id = 'wishIcon'
+    wishIconDiv.addEventListener('click', this.addWishList.bind(this))
+    if (this.checkList(this[list][game].id, 'wishList')) {
+      wishIconDiv.classList.add('inList')
+    }
+    
+    listIconsContainer.appendChild(myGamesIconDiv)
+    listIconsContainer.appendChild(wishIconDiv)
+    gameContainer.appendChild(listIconsContainer)
   }
 }
 
@@ -465,10 +614,8 @@ const buildSearch = (event) => {
     if (searchInput === '') {
       igdbQuery = igdbBaseQuery
     } else {
-    igdbQuery = `search "${searchInput}"; 
-                fields artworks.*, cover.*, first_release_date, name, platforms, rating, release_dates.*, screenshots.*, summary, videos.*;
-                where platforms = (${platformId}) & (age_ratings != null | category = 3);
-                limit 50;`
+    igdbQuery = `search "${searchInput}"; ${igdbBaseQuery}`
+                
     }
     getIgdbData('games', igdbQuery)
     .then((res) => res.json())
