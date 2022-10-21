@@ -373,6 +373,7 @@ class Games {
   }
   displayGame(event) {
     this.clearDisplay()
+    clearHighlight()
     let game = event.composedPath()[1].dataset.id
     let list = this.currentDisplayedList
 

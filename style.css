@@ -356,9 +356,7 @@ body {
 .videosContainer {
     display: flex;
     flex-wrap: wrap;
-}
-.videos {
-    padding: 10px;
+    justify-content: space-evenly;
 }
 
 .gameContainer .listIconsContainer {
