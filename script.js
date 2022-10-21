@@ -159,7 +159,11 @@ class Games {
     // add property platformName so that games with multiple platforms can be kept track of separatly when added to myGamesList or wishList
     for (const game of data) {
       game.platformName = platformName
-      game.platformId = platformId
+      if (platformId === '22, 33') {
+        game.platformId = '33'
+      } else {
+        game.platformId = platformId
+      }
       if (game.cover != null) {
         this.addSearchList(game)
       }
@@ -234,6 +238,10 @@ class Games {
     return date
   }
 
+  getPlatformLogo(platformId) {
+    return platformLogos[platformId]
+  }
+
   displayResultsFlex(list) {
     this.currentDisplayedList = list
     
@@ -254,13 +262,29 @@ class Games {
       resultDiv.appendChild(coverImg)
 
       // Title Summary and Relase Date Div
+      let titleContainer = document.createElement('div')
+      titleContainer.className = 'titleContainer'
+      // Title Bar (Title and Platform Logo)
+      let titleBar = document.createElement('div')
+      titleBar.className = 'titleBar'
       // Title
-      let titleDivContainer = document.createElement('div')
-      titleDivContainer.className = 'titleContainer'
       let titleDiv = document.createElement('div')
       titleDiv.className = 'title'
       titleDiv.innerText = this[list][game].name
-      titleDivContainer.appendChild(titleDiv)
+      titleBar.appendChild(titleDiv)
+      // Platform Logo
+      let platformLogo = document.createElement('img')
+      platformLogo.className = 'logo'
+      let logoPlatformId = this[list][game].platformId
+      platformLogo.src = this.getPlatformLogo(logoPlatformId)
+      // adjust Logo Size
+      if (logoPlatformId == 19 || logoPlatformId == 29) {
+        platformLogo.classList.add('smallerLogo')
+      } else if (logoPlatformId == 33) {
+        platformLogo.classList.add('evenSmallerLogo')
+      }
+      titleBar.appendChild(platformLogo)
+      titleContainer.appendChild(titleBar)
       // Summary
       let summaryDiv = document.createElement('div')
       summaryDiv.className = 'summary'
@@ -272,13 +296,13 @@ class Games {
         }
       }
       summaryDiv.innerText = summaryBrief
-      titleDivContainer.appendChild(summaryDiv)
+      titleContainer.appendChild(summaryDiv)
       // Release Date
       let releaseDateDiv = document.createElement('div')
       releaseDateDiv.className = 'releaseDate'
       releaseDateDiv.innerText = 'Release Date: ' + this.findReleaseDateForPlatform(this[list][game].releaseDates, this[list][game].platformId)
-      titleDivContainer.appendChild(releaseDateDiv)
-      resultDiv.appendChild(titleDivContainer)
+      titleContainer.appendChild(releaseDateDiv)
+      resultDiv.appendChild(titleContainer)
 
       // End Container - Ratings and Icons
       let endContainer = document.createElement('div')
@@ -485,7 +509,7 @@ const buildSearch = (event) => {
 
 // Logo SVG's from https://logos.fandom.com/wiki/Category:Defunct_video_game_systems
 let platformLogos = {
-            18: "https://static.wikia.nocookie.net/logopedia/images/0/0d/NES_logo.svg",
+            18 : "https://static.wikia.nocookie.net/logopedia/images/0/0d/NES_logo.svg",
             35 : "https://static.wikia.nocookie.net/logopedia/images/c/ca/SEGA_Game_Gear_Early_NA_Logo.svg",
             22 : "https://static.wikia.nocookie.net/logopedia/images/8/81/D6qt2ly-5c06d9cc-e979-4d32-bb59-2332cc124348.png",
             33 : "https://static.wikia.nocookie.net/logopedia/images/d/d5/Nintendo_Game_Boy_packaging.svg",

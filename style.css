@@ -1,6 +1,7 @@
 body {
     background-color: #DF362D;
     margin: 0;
+    min-width: 995px;
 }
 
 #title {
@@ -9,6 +10,14 @@ body {
     font-size: 90px;
     text-align: center;
     margin: 40px auto;
+}
+
+#subTitle {
+    font-family: 'JetBrains Mono', monospace;
+    color: #252525;
+    font-size: 20px;
+    text-align: center;
+    margin-top: -40px;
 }
 
 #navbar {
@@ -197,9 +206,26 @@ body {
     color: #e2e2e2;
     margin: 15px;
 }
-.title {
+.titleBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 2px solid #e2e2e2;
     margin-bottom: 15px;
+    padding-bottom: 10px;
+    height: 50px;
+}
+.title {
+    float: inline-end;
+}
+.logo {
+    height: 50px;
+}
+.smallerLogo {
+    height: 40px;
+}
+.evenSmallerLogo {
+    height: 30px;
 }
 .summary {
     font-size: 12px;
@@ -271,8 +297,8 @@ body {
 
 .listIcon:hover {
     color: dodgerblue;
-    font-size: 2.5em;
-    transition: .3s ease-out;
+    /* font-size: 2.5em;
+    transition: .3s ease-out; */
 }
 
 #trashIcon:hover {
